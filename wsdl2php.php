@@ -1,10 +1,5 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html>
-<head>
-    <title>WSDSL2PHP</title>
-</head>
-<body>
-<?
+<?php
+include 'EasyWsdl2PHP.php';
 if (isset($_POST['url'])) {
     $url   = $_POST['url'];
     $sname = $_POST['sname'];
@@ -13,31 +8,33 @@ if (isset($_POST['url'])) {
     $sname = '';
 }
 ?>
-<h2>Easy WSDL2PHP Generator</h2>
+<!DOCTYPE>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>WSDSL2PHP</title>
+</head>
+<body>
+    <h1>Easy WSDL2PHP Generator</h1>
+    <form action="wsdl2php.php" method="post">
+        <div><label for="url">Url:<br /><input type="url" name="url" id="url" size="60" placeholder="e.g. http://www.webservicex.com/CurrencyConvertor.asmx?wsdl" value="<?php echo $url ? $url : ''; ?>" /></label><br /></div>
 
-<p> ej. http://soap.amazon.com/schemas2/AmazonWebServices.wsdl</p>
+        <div><br /><label for="sname">Service Class Name:<br /><input type="text" name="sname" id="sname" size="20" placeholder="Service" value="<?php echo $sname ? $sname : ''; ?>" /></label><br /></div>
 
-<form action="wsdl2php.php" method="post">
-    <p>Url: <input type="text" name="url" size="60" value="<?= $url ?>"/></p>
-
-    <p>Class Name: <input type="text" name="sname" size="60" value="<?= $sname ?>"/></p>
-
-    <input type="submit" name="generatebtn" value="Generate Code"/>
-</form>
-
-<? if (isset($_POST['generatebtn'])) { ?>
-    <form method="post" action="http://thephppro.com/tools/beautify.php">
-<textarea rows="10" cols="80" name="code">
-
-<?
-include 'EasyWsdl2PHP.php';
-echo EasyWsdl2PHP::generate(trim($url), $sname);
-?>
-</textarea>
+        <br /><button type="submit" name="generatebtn">Generate Code</button>
     </form>
-    Beutify at <a target="_blank"
-                  href="http://thephppro.com/tools/beautify.php">http://thephppro.com/tools/beautify.php</a>
 
-<? } ?>
+    <?php
+    if (isset($_POST['generatebtn'])) {
+    ?>
+    <label for="code">Code:</label><br />
+    <textarea rows="20" cols="120" name="code" id="code">
+    <?php
+    echo EasyWsdl2PHP::generate(trim($url), $sname);
+    ?>
+    </textarea>
+    <?php
+    }
+    ?>
 </body>
 </html>
