@@ -8,6 +8,7 @@ class EasyWsdl2PHP
         $classesArr = [];
         $functions = $soapClient->__getFunctions();
         $nl = "\n";
+        $tab = "    ";
         $code        = '';
         $simpletypes = ['string', 'int', 'double', 'dateTime', 'float'];
         foreach ($functions as $func) {
@@ -23,18 +24,18 @@ class EasyWsdl2PHP
             $par  = $t2[1];
             $params = explode(' ', $par);
             $p1     = '$' . $params[0];
-            $code .= $nl . 'function ' . $func . '(' . $p1 . ')'
-                     . "{$nl}{\n";
+            $code .= $nl . $tab . 'public function ' . $func . '(' . $p1 . ')'
+                     . "{$nl}{$tab}{";
             if ($temp[0] == 'void') {
                 $code .= $nl . "\$this->soapClient->$func({$p1});{$nl}}";
             } else {
-                $code .= $nl . '$' . $temp[0] . ' = ' . "\$this->soapClient->$func({$p1});";
-                $code .= $nl . "return \${$temp[0]};\n{$nl}}";
+                $code .= $nl . $tab . $tab . "return \$this->soapClient->$func({$p1});{$nl}{$tab}}\n";
             }
         }
         $code .= "}\n{$nl}";
         //    print_r($functions);
         //    echo "<hr>";
+
         $types = $soapClient->__getTypes();
         // print_r($types);
         $codeType = '';
@@ -46,7 +47,7 @@ class EasyWsdl2PHP
                 // echo "[" . $data . "]";
                 $classname = trim(substr($type, 6, strpos($type, '{') - 6));
                 //write object
-                $codeType .= $nl . 'class ' . $classname . '{';
+                $codeType .= $nl . 'class ' . $classname . $nl . '{';
                 $classesArr [] = $classname;
                 foreach ($data_members as $member) {
                     $member = trim($member);
@@ -54,37 +55,37 @@ class EasyWsdl2PHP
                         continue;
                     }
                     list($data_type, $member_name) = explode(' ', $member);
-                    $codeType .= "{$nl}var \${$member_name};//{$data_type}";
+                    $codeType .= "{$nl}{$tab}protected \${$member_name};//{$data_type}";
                 }
-                $codeType .= $nl . '}';
+                $codeType .= $nl . '}' . $nl;
             }
         }
-        $mapstr       = "\n" . 'private static $classmap = array(';
+
+        $mapstr       = "\n" . $tab . 'private static $classmap = [';
         $classMAPCode = [];
         foreach ($classesArr as $cname) {
             // $mapstr .= "\n,'$cname'=>'$cname'";
-            $classMAPCode[] = "'$cname'=>'$cname'\n";
+            $classMAPCode[] = "\n{$tab}{$tab}'$cname'=>'$cname',";
         }
         //print_r($classMAPCode);
-        $mapstr .= implode(',', $classMAPCode);
-        $mapstr .= "\n);";
+        $mapstr .= implode('', $classMAPCode);
+        $mapstr .= "\n" . $tab . '];';
+        
         $fullcode = <<< EOT
 <?php
 $codeType
-class $sname $nl {
- var \$soapClient;
- $mapstr
 
- function __construct(\$url='{$url}')
- {
-  \$this->soapClient = new SoapClient(\$url,array("classmap"=>self::\$classmap,"trace" => true,"exceptions" => true));
- }
- $code
-?>
+class $sname
+{
+    protected \$soapClient;
+    $mapstr
+
+    public function __construct(\$url='{$url}')
+    {
+        \$this->soapClient = new SoapClient(\$url,array("classmap"=>self::\$classmap,"trace" => true,"exceptions" => true));
+    }
+    $code
 EOT;
-
         return $fullcode;
     }
 }
-
-?>
