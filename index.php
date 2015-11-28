@@ -16,7 +16,7 @@ if (isset($_POST['url'])) {
 </head>
 <body>
     <h1>Easy WSDL2PHP Generator</h1>
-    <form action="wsdl2php.php" method="post">
+    <form action="index.php" method="post">
         <div><label for="url">Url:<br /><input type="url" name="url" id="url" size="60" placeholder="e.g. http://www.webservicex.com/CurrencyConvertor.asmx?wsdl" value="<?php echo $url ? $url : ''; ?>" /></label><br /></div>
 
         <div><br /><label for="sname">Service Class Name:<br /><input type="text" name="sname" id="sname" size="20" placeholder="Service" value="<?php echo $sname ? $sname : ''; ?>" /></label><br /></div>
