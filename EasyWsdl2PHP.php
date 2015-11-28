@@ -11,17 +11,17 @@ class EasyWsdl2PHP
         $code        = '';
         $simpletypes = ['string', 'int', 'double', 'dateTime', 'float'];
         foreach ($functions as $func) {
-            $temp = split(' ', $func, 2);
+            $temp = explode(' ', $func, 2);
             //less process whateever is inside ()
             $start      = strpos($temp[1], '(');
             $end        = strpos($temp[1], '(');
             $parameters = substr($temp[1], $start, $end);
             $t1   = str_replace(')', '', $temp[1]);
             $t1   = str_replace('(', ':', $t1);
-            $t2   = split(':', $t1);
+            $t2   = explode(':', $t1);
             $func = $t2[0];
             $par  = $t2[1];
-            $params = split(' ', $par);
+            $params = explode(' ', $par);
             $p1     = '$' . $params[0];
             $code .= $nl . 'function ' . $func . '(' . $p1 . ')'
                      . "{$nl}{\n";
@@ -41,7 +41,7 @@ class EasyWsdl2PHP
         foreach ($types as $type) {
             if (substr($type, 0, 6) == 'struct') {
                 $data         = trim(str_replace(['{', '}'], '', substr($type, strpos($type, '{') + 1)));
-                $data_members = split(';', $data);
+                $data_members = explode(';', $data);
                 //print_r($data_members);
                 // echo "[" . $data . "]";
                 $classname = trim(substr($type, 6, strpos($type, '{') - 6));
@@ -53,7 +53,7 @@ class EasyWsdl2PHP
                     if (strlen($member) < 1) {
                         continue;
                     }
-                    list($data_type, $member_name) = split(' ', $member);
+                    list($data_type, $member_name) = explode(' ', $member);
                     $codeType .= "{$nl}var \${$member_name};//{$data_type}";
                 }
                 $codeType .= $nl . '}';
