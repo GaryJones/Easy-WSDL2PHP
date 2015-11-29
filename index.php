@@ -1,4 +1,6 @@
 <?php
+
+namespace Gamajo\EasyWsdl2PHP;
 include 'EasyWsdl2PHP.php';
 if (isset($_POST['url'])) {
     $url   = $_POST['url'];
